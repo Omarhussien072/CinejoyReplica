@@ -1,0 +1,92 @@
+.nav,
+.phoneNav {
+    background: #0e0e1061;
+    border: 1px solid rgba(255, 255, 255, .07);
+    backdrop-filter: blur(20px);
+    box-shadow: inset 0 1px #ffffff12, 0 8px 30px #0000004d;
+    font-family: var(--default-font-family);
+}
+
+.nav {
+    padding: var(--nav-pad);
+}
+
+.phoneNav {
+    padding: 0 16px;
+}
+
+nav {
+    background: #0e0e1061;
+    border: 1px solid rgba(255, 255, 255, .07);
+    backdrop-filter: blur(20px);
+    box-shadow: inset 0 1px #ffffff12, 0 8px 30px #0000004d;
+    font-family: var(--default-font-family);
+}
+
+nav .navItem {
+    padding: 0 1.5rem;
+    height: var(--nav-item-h);
+    transition: all 0.3s ease;
+}
+
+
+nav .phoneNavItem {
+    width: 14vw;
+    max-width: 60px;
+    height: var(--nav-item-h);
+    transition: var(--nav-transition);
+    border-radius: 99999px;
+}
+
+nav .phoneNavItem:global(.active) {
+    background-color: rgba(255, 255, 255, .15);
+}
+
+nav .phoneNavItem:global(.active) span,
+nav .phoneNavItem:global(.active) svg {
+    color: white;
+    opacity: 1;
+}
+
+
+nav .pillTransition {
+    transition: var(--nav-transition);
+}
+
+nav .divider {
+    flex: none;
+    background: linear-gradient(to bottom, #fff0, #ffffff29, #fff0);
+}
+
+nav .searchIndicator,
+nav .settingsIndicator {
+    padding: 0.62rem;
+    border-radius: 50%;
+    transition: 0.3s all ease-out;
+}
+    
+nav .navItem:not(:global(.active)):hover {
+    color: white;
+}
+
+nav .searchIndicator:not(:global(.active)):hover,
+.settingsIndicator:not(:global(.active)):hover {
+    color: #fff;
+    background-color: #4242424d;
+}
+
+nav .icon {
+    display: none;
+}
+
+nav .navItem:global(.active) .icon {
+    display: block;
+}
+
+.logo {
+    transition: 0.2s transform linear;
+}
+
+.logo:hover {
+    transform: scale(1.1);
+}

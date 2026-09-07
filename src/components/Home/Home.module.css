@@ -1,0 +1,38 @@
+.heroBase {
+    font-family: var(--default-font-family);
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.heroSecondary {
+    transition: 0.5s background-color ease;
+}
+
+.heroThird {
+    mask-image: linear-gradient(to bottom, black 40%, transparent 98%);
+    -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 98%);
+}
+
+.heroToTopBackdrop{
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.2) 2% , transparent 98%);
+}
+.heroToRightBackdrop{
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.2) 2% , transparent 98%);
+}
+
+.dotAnimation {
+    animation: fillProgress 6s linear forwards;
+}
+
+
+@keyframes fillProgress {
+    0% {
+        width: 0%;
+    }
+
+    100%{
+        width: 100%;
+    }
+}

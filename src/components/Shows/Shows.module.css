@@ -1,0 +1,4 @@
+.background {
+    background-color: rgb(19, 78, 74);
+    background-image: radial-gradient(at 47% 30%, rgb(17, 94, 89) 0, transparent 83%), radial-gradient(at 3% 4%, rgb(217, 249, 157) 0, transparent 25%), radial-gradient(at 32% 51%, rgb(109, 40, 217) 0, transparent 85%), radial-gradient(at 96% 22%, rgb(49, 46, 129) 0, transparent 17%), radial-gradient(at 94% 97%, rgb(153, 27, 27) 0, transparent 14%), radial-gradient(at 64% 74%, rgb(45, 212, 191) 0, transparent 48%);
+}

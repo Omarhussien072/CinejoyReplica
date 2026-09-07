@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+:root {
+    --theme-themePreview-primary: #95ff50;
+    --theme-themePreview-secondary: #43861e;
+    --theme-pill-background: #3c324f;
+    --theme-pill-backgroundHover: #4a3f60;
+    --theme-pill-highlight: #7a6bae;
+    --theme-pill-activeBackground: #3c324f;
+    --theme-global-accentA: #7a6bae;
+    --theme-global-accentB: #5a4e8c;
+    --theme-lightBar-light: #3d3571;
+    --theme-buttons-toggle: #3f8a1d;
+    --theme-buttons-toggleDisabled: #1c243c;
+    --theme-buttons-secondary: #131829;
+    --theme-buttons-secondaryHover: #131829;
+    --theme-buttons-purple: #356916;
+    --theme-buttons-purpleHover: #43861e;
+    --theme-buttons-cancel: #1c243c;
+    --theme-buttons-cancelHover: #2b344e;
+    --theme-background-main: #050505;
+    --theme-background-secondary: #1d1728;
+    --theme-background-secondaryHover: #302741;
+    --theme-background-accentA: #356916;
+    --theme-background-accentB: #2b2450;
+    --theme-modal-background: #0a0a0a;
+    --theme-type-logo: #95ff50;
+    --theme-type-text: #756790;
+    --theme-type-dimmed: #756790;
+    --theme-type-divider: #1c243c;
+    --theme-type-secondary: #5b627b;
+    --theme-type-link: #95ff50;
+    --theme-type-linkHover: #c9ffab;
+    --theme-search-background: #251e32;
+    --theme-search-hoverBackground: #1d1728;
+    --theme-search-focused: #302741;
+    --theme-search-placeholder: #60527a;
+    --theme-search-icon: #60527a;
+    --theme-mediaCard-hoverBackground: #1d1728;
+    --theme-mediaCard-hoverAccent: #8b7aab;
+    --theme-mediaCard-hoverShadow: #0d0a12;
+    --theme-mediaCard-shadow: #181322;
+    --theme-mediaCard-barColor: #444b64;
+    --theme-mediaCard-barFillColor: #95ff50;
+    --theme-mediaCard-badge: #181322;
+    --theme-mediaCard-badgeText: #5b627b;
+    --theme-largeCard-background: #1d1728;
+    --theme-largeCard-icon: #43861e;
+    --theme-dropdown-background: #1d1728;
+    --theme-dropdown-altBackground: #181322;
+    --theme-dropdown-hoverBackground: #251e32;
+    --theme-dropdown-text: #756790;
+    --theme-dropdown-secondary: #60527a;
+    --theme-dropdown-border: #302741;
+    --theme-dropdown-contentBackground: #251e32;
+    --theme-authentication-border: #3c324f;
+    --theme-authentication-inputBg: #1d1728;
+    --theme-authentication-inputBgHover: #251e32;
+    --theme-authentication-wordBackground: #251e32;
+    --theme-authentication-copyText: #60527a;
+    --theme-authentication-copyTextHover: #7f859b;
+    --theme-settings-sidebar-activeLink: #1d1728;
+    --theme-settings-sidebar-badge: #0d0a12;
+    --theme-settings-sidebar-type-secondary: #4a3f60;
+    --theme-settings-sidebar-type-inactive: #756790;
+    --theme-settings-sidebar-type-icon: #756790;
+    --theme-settings-sidebar-type-iconActivated: #5fb82c;
+    --theme-settings-sidebar-type-activated: #c9ffab;
+    --theme-settings-card-border: #302741;
+    --theme-settings-card-background: #302741;
+    --theme-settings-card-altBackground: #302741;
+    --theme-settings-saveBar-background: #130f1b;
+    --theme-utils-divider: #2b344e;
+    --theme-errors-card: #130f1b;
+    --theme-errors-border: #1c243c;
+    --theme-errors-type-secondary: #5b627b;
+    --theme-about-circle: #1c243c;
+    --theme-about-circleText: #7f859b;
+    --theme-editBadge-bg: #1c243c;
+    --theme-editBadge-bgHover: #202842;
+    --theme-editBadge-text: #7f859b;
+    --theme-progress-background: #7f859b;
+    --theme-progress-preloaded: #7f859b;
+    --theme-progress-filled: #5fb82c;
+    --theme-video-buttonBackground: #444b64;
+    --theme-video-autoPlay-background: #131829;
+    --theme-video-autoPlay-hover: #1c243c;
+    --theme-video-scraping-card: #181322;
+    --theme-video-scraping-loading: #5fb82c;
+    --theme-video-scraping-noresult: #5b627b;
+    --theme-video-audio-set: #5fb82c;
+    --theme-video-context-background: #0c0f16;
+    --theme-video-context-light: #756790;
+    --theme-video-context-border: #171d32;
+    --theme-video-context-hoverColor: #171d32;
+    --theme-video-context-buttonFocus: #1c243c;
+    --theme-video-context-flagBg: #1c243c;
+    --theme-video-context-inputBg: #171d32;
+    --theme-video-context-buttonOverInputHover: #1c243c;
+    --theme-video-context-inputPlaceholder: #444b64;
+    --theme-video-context-cardBorder: #131829;
+    --theme-video-context-slider: #7f859b;
+    --theme-video-context-sliderFilled: #5fb82c;
+    --theme-video-context-buttons-list: #131829;
+    --theme-video-context-buttons-active: #0c0f16;
+    --theme-video-context-closeHover: #101420;
+    --theme-video-context-type-secondary: #444b64;
+    --theme-video-context-type-accent: #5fb82c;
+    --theme-root-bg: #04120b;
+    --aurora-fallback: #04120b;
+
+    --nav-transition: .4s cubic-bezier(.34, 1.56, .64, 1);
+    --nav-fade: .3s ease;
+    --condense-ease: cubic-bezier(.4, 0, .2, 1);
+    --nav-pad: 6px;
+    --nav-item-h: 40px;
+
+    --global--size: clamp(2rem, 4vw, 5rem);
+    --anim--hover-time: .4s;
+    --anim--hover-ease: cubic-bezier(.25, 1, .5, 1);
+
+}
+
+html {
+    background-color: var(--theme-root-bg);
+    font-family: -apple-system, BlinkMacSystemFont, Inter, sans-serif;
+}
+
+.active {
+    color: black;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: white !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50%;
+    transform: scale(0.7);
+    transition: all 0.2s ease;
+    user-select: none;
+    opacity: 0;
+}
+
+.swiper:hover .swiper-button-next, .swiper:hover .swiper-button-prev {
+    opacity: 1;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+    transform: scale(0.85);
+}
+
+
+.swiper-button-disabled {
+    opacity: 0 !important;
+}
