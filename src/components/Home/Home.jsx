@@ -11,6 +11,7 @@ import { NavLink } from 'react-router-dom';
 import YouTube from 'react-youtube';
 import CarouselComponent from '../CarouselComponent/CarouselComponent';
 import magicPill from '../Navbar/Navbar';
+import Footer from '../Footer/Footer';
 
 export default function Home() {
     let [providers, setProviders] = useState([]);
@@ -131,18 +132,18 @@ export default function Home() {
             <div className={`relative min-h-screen w-full overflow-x-hidden bg-[#050505] pb-20 lg:pb-16  ${HomeStyles.heroBase}`}>
                 <div className={`fixed inset-0 w-full h-full z-0 pointer-events-none ${HomeStyles.heroSecondary}`}>
                     <AnimatePresence mode='wait'>
-                        {activeMovie && <motion.img key={activeMovie.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} duration={{duration: 1, ease:'linear'}} className={`w-full h-full object-cover opacity-50 scale-105 transition-all`} src={`${imgBaseUrl}${activeMovie.backdrop_path}`} alt={activeMovie.title} />}
+                        {activeMovie && <motion.img key={activeMovie.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} duration={{ duration: 1, ease: 'linear' }} className={`w-full h-full object-cover opacity-50 scale-105 transition-all`} src={`${imgBaseUrl}${activeMovie.backdrop_path}`} alt={activeMovie.title} />}
                     </AnimatePresence>
                     <div className='absolute inset-0 bg-linear-to-b from-black/20 via-transparent/80  backdrop-blur-3xl'></div>
                 </div>
                 <div className={`relative h-[85vh] w-full cursor-pointer`} role='button' onClick={() => setIsPaused(true)}>
-                    {isPaused ? <button onClick={toggleMute} className='absolute bottom-48 right-16 text-white bg-black/40 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all z-30 p-3 rounded-full cursor-pointer'>
+                    {isPaused && activeMovie.trailerKey ? <button onClick={toggleMute} className='absolute bottom-48 right-16 text-white bg-black/40 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all z-30 p-3 rounded-full cursor-pointer'>
                         {isMuted ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide-icon lucide lucide-volume-x w-6 h-6"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><line x1="22" x2="16" y1="9" y2="15"></line><line x1="16" x2="22" y1="9" y2="15"></line></svg>
                             : <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide-icon lucide lucide-volume-2 w-6 h-6"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path><path d="M19.364 18.364a9 9 0 0 0 0-12.728"></path></svg>
                         }
                     </button> : <div></div>}
                     <div className={`absolute inset-0 top-0 left-0 right-0 overflow-hidden ${HomeStyles.heroThird}`}>
-                        {isPaused && activeMovie ?
+                        {isPaused && activeMovie.trailerKey ?
                             <>
                                 <YouTube
                                     videoId={activeMovie.trailerKey[0].key}
@@ -269,6 +270,7 @@ export default function Home() {
                         <CarouselComponent cardsData={topRatedShows} type='series' title='Top Rated Series' />
                     </div>
                 </div>
+                <Footer/>
             </div>
         </>
     );
