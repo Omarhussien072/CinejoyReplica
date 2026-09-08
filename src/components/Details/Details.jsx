@@ -12,6 +12,7 @@ export default function Details() {
     const [isLoading, setIsLoading] = useState(true);
     const [videoError, setVideoError] = useState(false);
     const [recommendations, setRecommendations] = useState([]);
+    const [secondRender, setSecondRender] = useState(false); 
 
     let [player, setPlayer] = useState(null);
     let [isFullScreen, setIsFullScreen] = useState(false);
@@ -32,29 +33,32 @@ export default function Details() {
             const data = await getRecommendations(id, type);
             if (isMounted && data);
             setRecommendations(data);
-            setIsLoading(false)
+            setIsLoading(false);
         }
 
         loadDetails();
         loadRecommendations();
 
-        return () => { isMounted = false; };
+        return () => { isMounted = false; setSecondRender(true); };
     }, [id, type]);
 
     if (isLoading) {
         return <div className='min-h-screen w-full flex justify-center items-center'>
             <div className={`${DetailsStyles.loading}`}></div> {setTimeout(() => {
                 return;
-            }, 4000)}
+            }, 4000)};
         </div>
     }
 
-    if (!details) {
+    if (!details && secondRender) {
         return <div className='min-h-screen w-full flex justify-center items-center'>
-            <div className="min-h-screen flex items-center justify-center text-white">Item not found.</div>
+            <div className="min-h-screen flex items-center justify-center text-white text-4xl">Item not found.</div>
         </div>
     }
 
+    if(!details){
+        return;
+    }
 
 
     const triggerNativeFullScreen = (iframe) => {
@@ -78,14 +82,13 @@ export default function Details() {
             setIsFullScreen(true);
         }
     }
-
-    console.log(details);
     const detailsTitle = type === 'movie' ? details.title : details.name;
     const detailsDate = type === 'movie' ? details.release_date.slice(0, 4) : details.first_air_date.slice(0, 4);
     const validVideos = details.videos?.results?.filter((v) => v.type === 'Trailer' || v.type === 'Teaser');
     const fallbackVideo = details.videos?.results?.[0];
     const activeVideoKey = validVideos?.length > 0 ? validVideos[0].key : fallbackVideo?.key;   
     const activeLogo = Array.isArray(details.logo)? details.logo[0]?.path_name : details.logo;
+
     return (
         <div className={`relative min-h-screen w-full overflow-x-hidden bg-[#050505] pb-20 lg:pb-16`}>
 
@@ -94,7 +97,7 @@ export default function Details() {
                 <div className='absolute inset-0 bg-gradient-to-b from-black/20 via-black/80 to-[#050505] backdrop-blur-3xl'></div>
             </div>
 
-            <div className='absolute top-0 left-0 h-[85vh] w-full z-0 overflow-hidden'>
+            <div className='absolute top-0 left-0 right-0 h-[85vh] w-full overflow-hidden'>
                 {videoError !== true ? (
                     <YouTube videoId={activeVideoKey}
                         onReady={(e) => setPlayer(e.target)}
