@@ -152,7 +152,6 @@ export const getMovieLogo = async (movie_id) => {
     let res = await axios(`${import.meta.env.VITE_API_URL}movie/${movie_id}/images?api_key=${import.meta.env.VITE_API_KEY}&include_image_language=en`)
         .then(res => res.data.logos)
         .catch(err => console.error(err));
-    console.log(res)
     if (res && res.length > 0) {
         return `${imgBaseUrl}${res[0].file_path}`;
     }
@@ -244,7 +243,6 @@ export const getDetails = async (id, type) => {
 
     detailsCache[uniqueKey] = detailsWithLogo;
     localStorage.setItem('detailsCache', JSON.stringify(detailsCache));
-    console.log(detailsWithLogo);
     return detailsWithLogo;
 
 }
