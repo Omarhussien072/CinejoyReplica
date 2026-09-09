@@ -12,7 +12,7 @@ export default function Details() {
     const [isLoading, setIsLoading] = useState(true);
     const [videoError, setVideoError] = useState(false);
     const [recommendations, setRecommendations] = useState([]);
-    const [secondRender, setSecondRender] = useState(false); 
+    const [secondRender, setSecondRender] = useState(false);
 
     let [player, setPlayer] = useState(null);
     let [isFullScreen, setIsFullScreen] = useState(false);
@@ -56,7 +56,7 @@ export default function Details() {
         </div>
     }
 
-    if(!details){
+    if (!details) {
         return;
     }
 
@@ -86,15 +86,15 @@ export default function Details() {
     const detailsDate = type === 'movie' ? details.release_date.slice(0, 4) : details.first_air_date.slice(0, 4);
     const validVideos = details.videos?.results?.filter((v) => v.type === 'Trailer' || v.type === 'Teaser');
     const fallbackVideo = details.videos?.results?.[0];
-    const activeVideoKey = validVideos?.length > 0 ? validVideos[0].key : fallbackVideo?.key;   
-    const activeLogo = Array.isArray(details.logo)? details.logo[0]?.path_name : details.logo;
+    const activeVideoKey = validVideos?.length > 0 ? validVideos[0].key : fallbackVideo?.key;
+    const activeLogo = Array.isArray(details.logo) ? details.logo[0]?.path_name : details.logo;
 
     return (
         <div className={`relative min-h-screen w-full overflow-x-hidden bg-[#050505] pb-20 lg:pb-16`}>
 
             <div className={`fixed inset-0 w-full h-full z-0 pointer-events-none`}>
                 {details && <img className={`w-full h-full object-cover opacity-50 scale-105`} src={`${imgBaseUrl}${details.backdrop_path}`} alt={detailsTitle} />}
-                <div className='absolute inset-0 bg-gradient-to-b from-black/20 via-black/80 to-[#050505] backdrop-blur-3xl'></div>
+                <div className='absolute inset-0 bg-linear-to-b from-black/20 via-transparent/80  backdrop-blur-3xl'></div>
             </div>
 
             <div className='absolute top-0 left-0 right-0 h-[85vh] w-full overflow-hidden'>

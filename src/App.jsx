@@ -10,6 +10,7 @@ import Settings from './components/Settings/Settings'
 import Layout from './components/Layout/Layout'
 import NotFound from './components/NotFound/NotFound';
 import Details from './components/Details/Details';
+import ProviderDiscovery from './components/ProviderDiscovery/ProviderDiscovery';
 
 function App() {
   const routes = createBrowserRouter([
@@ -21,6 +22,7 @@ function App() {
       {path: 'search', element: <Search />},
       {path: 'settings', element: <Settings />},
       {path:"/:type/:type/:id", element: <Details />},
+      {path:"/:type/:id" , element: <ProviderDiscovery />},
       {path:'/*', element: <NotFound/>},
     ] },
   ])

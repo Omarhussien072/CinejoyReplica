@@ -12,7 +12,7 @@ export default function CarouselComponent({ cardsData, type, title }) {
             <Swiper modules={[Navigation, FreeMode]} navigation={true} freeMode={true} spaceBetween={16} slidesPerView={'auto'} className='w-full'>
                 {
                     (cardsData && type === 'movie') ? cardsData.map((movie) => (
-                        <SwiperSlide key={movie.id} className="w-50! lg:w-65! select-none">
+                        <SwiperSlide key={movie.id} className="w-50! lg:w-65! p-5! select-none">
                             <Card id={movie.id} title={movie.title} img_path={movie.backdrop_path} release_date={movie.release_date} vote={movie.vote_average} type={type} />
                         </SwiperSlide>
                     )) : cardsData.map((show) => (

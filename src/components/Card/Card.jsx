@@ -8,9 +8,9 @@ export default function Card({ id, title, img_path, release_date, vote, type }) 
     let [isHovered, setIsHovered] = useState(false);
 
     return (
-        <NavLink onClick={magicPill} to={`/${type === 'movie'? 'movies' : 'series'}/${type}/${id}`} className={`flex flex-col items-center p-5 gap-2 hover:scale-105 transition-all duration-300`}>
+        <NavLink onClick={magicPill} to={`/${type === 'movie'? 'movies' : 'series'}/${type}/${id}`} className={`flex flex-col items-center gap-2 hover:scale-105 transition-all duration-300`}>
 
-            <div onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} className='flex flex-col gap-2 relative w-48 h-72 lg:w-64 lg:h-96 rounded-2xl overflow-hidden bg-white/5 ring-1 ring-white/10 shadow-lg transition-transform duration-300'>
+            <div onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} className='flex flex-col gap-2 relative w-48 h-72 lg:w-60 lg:h-96 rounded-2xl overflow-hidden bg-white/5 ring-1 ring-white/10 shadow-lg transition-transform duration-300'>
                 <img className={`w-full h-full object-cover`} src={`${imgBaseUrl}${img_path}`} alt={title} />
                 <div className={`absolute inset-0 w-full h-full pointer-events-none`}>
                     <AnimatePresence>

@@ -29,43 +29,27 @@ export default function Home() {
     let imgBaseUrl = 'https://image.tmdb.org/t/p/original';
 
     useEffect(() => {
-        const loadProviders = async () => {
-            const data = await getProviders();
-            setProviders(data);
-        };
-
-        const loadTopRatedMovies = async () => {
-            const data = await getTopRatedMovies();
-            setTopRatedMovies(data)
-        };
-
-        const loadTopRatedShows = async () => {
-            const data = await getTopRatedShows();
-            setTopRatedShows(data)
-        };
-
-        const loadTrendingMovies = async () => {
-            const data = await getTrendingMovies();
-            setTrendingMovies(data)
-        };
-
-        const loadTrendingShows = async () => {
-            const data = await getTrendingShows();
-            setTrendingShows(data)
-        };
-
-        const loadHeroMovies = async () => {
-            const data = await getHeroMovies();
-            setHeroMovies(data);
+        let isMounted = true;
+        const loadAllData = async () => {
+            let [providersData, topRatedMoviesData, topRatedShowsData, trendingMoviesData, trendingShowsData, heroMoviesData] = await Promise.all([
+                getProviders(),
+                getTopRatedMovies(),
+                getTopRatedShows(),
+                getTrendingMovies(),
+                getTrendingShows(),
+                getHeroMovies(),
+            ])
+            if (isMounted) {
+                setProviders(providersData);
+                setTopRatedMovies(topRatedMoviesData);
+                setTopRatedShows(topRatedShowsData);
+                setTrendingMovies(trendingMoviesData);
+                setTrendingShows(trendingShowsData);
+                setHeroMovies(heroMoviesData);
+            }
         }
-
-        loadProviders();
-        loadTopRatedMovies();
-        loadTopRatedShows();
-        loadTrendingMovies()
-        loadTrendingShows();
-        loadHeroMovies();
-
+        loadAllData();
+        return () => {isMounted = false;}
     }, [])
 
     useEffect(() => {
@@ -270,7 +254,7 @@ export default function Home() {
                         <CarouselComponent cardsData={topRatedShows} type='series' title='Top Rated Series' />
                     </div>
                 </div>
-                <Footer/>
+                <Footer />
             </div>
         </>
     );

@@ -112,7 +112,7 @@ export const getTrendingShows = async (page = 1) => {
     return res;
 }
 
-export const getProviders = async (region = 'eg') => {
+export const getProviders = async (region = 'us') => {
     let providerCache = localStorage.getItem('providers');
 
     if (providerCache) {
@@ -161,7 +161,7 @@ export const getShowLogo = async (show_id) => {
         .then(res => res.data.logos)
         .catch(err => console.error(err));
     if (res && res.length > 0) {
-        return res;
+        return `${imgBaseUrl}${res[0].file_path}`;
     }
 }
 
@@ -222,7 +222,7 @@ export const getDetails = async (id, type) => {
     const detailsType = type === 'series' || type === 'tv' ? 'tv' : 'movie';
     const uniqueKey = `${detailsType}_${id}`;
 
-    let detailsCache = JSON.parse(localStorage.getItem('detailsCache')) || {};
+    let detailsCache = JSON.parse(localStorage.getItem('details')) || {};
 
     if (detailsCache[uniqueKey]) {
         return detailsCache[uniqueKey];
@@ -242,17 +242,16 @@ export const getDetails = async (id, type) => {
     }
 
     detailsCache[uniqueKey] = detailsWithLogo;
-    localStorage.setItem('detailsCache', JSON.stringify(detailsCache));
+    localStorage.setItem('details', JSON.stringify(detailsCache));
     return detailsWithLogo;
 
 }
-
 
 export const getRecommendations = async (id, type) => {
     let recommendationType = type === 'series' || type === 'tv' ? 'tv' : 'movie';
     let uniqueKey = `${recommendationType}_${id}`;
 
-    let recommendationsCache = JSON.parse(localStorage.getItem('recommendationsCache')) || {};
+    let recommendationsCache = JSON.parse(localStorage.getItem('recommendations')) || {};
 
     if (recommendationsCache[uniqueKey]) {
         return recommendationsCache[uniqueKey];
@@ -270,5 +269,52 @@ export const getRecommendations = async (id, type) => {
     recommendationsCache[uniqueKey] = res;
     localStorage.setItem('recommendationsCache', JSON.stringify(recommendationsCache));
 
+    return res;
+}
+
+export const getProviderMovies = async (provider, region = 'us', page = 1) => {
+    let providerMoviesCache = JSON.parse(localStorage.getItem('providerMovies')) || {};
+    let uniqueKey = `providerMovies_id_${provider}_page_${page}`;
+
+
+    if (providerMoviesCache[uniqueKey]) {
+        return providerMoviesCache[uniqueKey];
+    }
+
+    let res = await axios(`${import.meta.env.VITE_API_URL}discover/movie?api_key=${import.meta.env.VITE_API_KEY}&include_adult=false&include_video=false&language=en-US&page=${page}&with_watch_providers=${provider}&watch_region=${region}`)
+        .then(res => res.data.results)
+        .catch((err) => console.log(err));
+
+    const cacheKeys = Object.keys(providerMoviesCache);
+
+    if (cacheKeys.length >= 15) {
+        delete providerMoviesCache[cacheKeys[0]];
+    }
+
+    providerMoviesCache[uniqueKey] = res;
+    localStorage.setItem('providerMovies', JSON.stringify(providerMoviesCache));
+    return res;
+}
+
+export const getProviderShows = async (provider, region = 'us', page = 1) => {
+    let providerShowsCache = JSON.parse(localStorage.getItem('providerShows')) || {};
+    let uniqueKey = `providerShows_id_${provider}_page_${page}`;
+
+    if (providerShowsCache[uniqueKey]) {
+        return providerShowsCache[uniqueKey];
+    }
+
+    let res = await axios(`${import.meta.env.VITE_API_URL}discover/tv?api_key=${import.meta.env.VITE_API_KEY}&include_adult=false&include_video=false&language=en-US&page=${page}&with_watch_providers=${provider}&watch_region=${region}`)
+        .then(res => res.data.results)
+        .catch((err) => console.log(err));
+
+    const cacheKeys = Object.keys(providerShowsCache);
+
+    if (cacheKeys.length >= 15) {
+        delete providerShowsCache[cacheKeys[0]];
+    }
+
+    providerShowsCache[uniqueKey] = res;
+    localStorage.setItem('providerShows', JSON.stringify(providerShowsCache));
     return res;
 }
