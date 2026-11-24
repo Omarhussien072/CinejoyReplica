@@ -12,7 +12,6 @@ import YouTube from 'react-youtube';
 import CarouselComponent from '../CarouselComponent/CarouselComponent';
 import magicPill from '../Navbar/Navbar';
 import Footer from '../Footer/Footer';
-import { s } from 'framer-motion/client';
 
 export default function Home() {
     let [providers, setProviders] = useState([]);
@@ -50,7 +49,7 @@ export default function Home() {
             }
         }
         loadAllData();
-        return () => { isMounted = false; }
+        return () => { isMounted = false;}
     }, [])
 
     useEffect(() => {
