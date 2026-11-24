@@ -9,8 +9,11 @@
     animation: matrix 1s infinite linear;
 }
 
-.background {
-    
+.navItem:global(.active) {
+    background-color: #fff;
+    border-radius: 16rem;
+    padding: 0 1rem;
+    color: #000;
 }
 
 @keyframes matrix {
