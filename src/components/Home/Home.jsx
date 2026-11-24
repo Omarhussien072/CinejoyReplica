@@ -5,13 +5,14 @@ import 'swiper/css/free-mode';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, FreeMode } from 'swiper/modules';
 import { useEffect, useState } from 'react';
-import { getProviders, getTopRatedMovies, getTopRatedShows, getTrendingMovies, getTrendingShows, getAllGenres, getHeroMovies } from '../../Services/ApiService/ApiService';
+import { getProviders, getTopRatedMovies, getTopRatedShows, getTrendingMovies, getTrendingShows, getHeroMovies } from '../../Services/ApiService/ApiService';
 import { AnimatePresence, motion } from "motion/react"
 import { NavLink } from 'react-router-dom';
 import YouTube from 'react-youtube';
 import CarouselComponent from '../CarouselComponent/CarouselComponent';
 import magicPill from '../Navbar/Navbar';
 import Footer from '../Footer/Footer';
+import { s } from 'framer-motion/client';
 
 export default function Home() {
     let [providers, setProviders] = useState([]);
@@ -49,7 +50,7 @@ export default function Home() {
             }
         }
         loadAllData();
-        return () => {isMounted = false;}
+        return () => { isMounted = false; }
     }, [])
 
     useEffect(() => {
@@ -62,19 +63,32 @@ export default function Home() {
         return () => clearInterval(timer);
     }, [heroMovies.length, currentIndex, isPaused])
 
+    useEffect(() => {
+        document.addEventListener('fullscreenchange', () => {
+            if(document.fullscreenElement){
+                setIsFullScreen(true);
+            }else{
+                setIsFullScreen(false);
+                setIsPaused(false);
+            }
+            if(player.isMuted()){
+                setIsMuted(true);
+            }else{
+                setIsMuted(false);
+            }
+        })
+    })
+
     let activeMovie = heroMovies[currentIndex];
 
     const onReady = (e) => {
         setPlayer(e.target);
-        if (isFullScreen) {
+        if (!isFullScreen) {
             triggerNativeFullScreen(e.target.getIframe());
             e.target.unMute();
             e.target.playVideo();
-            setIsMuted(false);
-            setIsFullScreen(true);
-        } else {
-            e.target.mute();
             setIsMuted(true);
+            setIsFullScreen(true);
         }
     }
 
@@ -102,12 +116,9 @@ export default function Home() {
     const fullScreen = (e) => {
         e.stopPropagation();
         setIsPaused(true);
-        if (player) {
-            player.unMute();
-            setIsMuted(false);
+        if (player && isFullScreen) {
             player.playVideo();
             triggerNativeFullScreen(player.getIframe());
-        } else {
             setIsFullScreen(true);
         }
     }
@@ -120,20 +131,20 @@ export default function Home() {
                     </AnimatePresence>
                     <div className='absolute inset-0 bg-linear-to-b from-black/20 via-transparent/80  backdrop-blur-3xl'></div>
                 </div>
-                <div className={`relative h-[85vh] w-full cursor-pointer`} role='button' onClick={() => setIsPaused(true)}>
+                <div className={`relative h-[85vh] w-full`}>
                     {isPaused && activeMovie.trailerKey ? <button onClick={toggleMute} className='absolute bottom-48 right-16 text-white bg-black/40 backdrop-blur-md border-white/10 hover:bg-white/10 transition-all z-30 p-3 rounded-full cursor-pointer'>
                         {isMuted ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide-icon lucide lucide-volume-x w-6 h-6"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><line x1="22" x2="16" y1="9" y2="15"></line><line x1="16" x2="22" y1="9" y2="15"></line></svg>
                             : <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide-icon lucide lucide-volume-2 w-6 h-6"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"></path><path d="M16 9a5 5 0 0 1 0 6"></path><path d="M19.364 18.364a9 9 0 0 0 0-12.728"></path></svg>
                         }
                     </button> : <div></div>}
-                    <div className={`absolute inset-0 top-0 left-0 right-0 overflow-hidden ${HomeStyles.heroThird}`}>
+                    <div className={`absolute inset-0 top-0 left-0 right-0 z-20 overflow-hidden ${HomeStyles.heroThird}`}>
                         {isPaused && activeMovie.trailerKey ?
                             <>
                                 <YouTube
                                     videoId={activeMovie.trailerKey[0].key}
                                     opts={{
                                         height: '100%',
-                                        width: '100%',
+                                        width: '100%',  
                                         playerVars: {
                                             mute: 1,
                                             autoplay: 1,
@@ -146,7 +157,7 @@ export default function Home() {
                                         }
                                     }}
                                     onReady={onReady}
-                                    className='absolute inset-0 z-30 w-full h-full scale-[1.8] object-cover pointer-events-none select-none'
+                                    className='absolute inset-0 z-30 w-full h-full scale-[1.8] object-cover select-none'
                                     iframeClassName='w-full h-full'
                                 />
                             </>
@@ -183,10 +194,10 @@ export default function Home() {
                         {activeMovie && <motion.div key={activeMovie.id} initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -30 }} transition={{ duration: 0.3, ease: 'easeInOut' }} className='absolute inset-0 flex items-end pb-20 px-6 lg:pb-24 lg:pl-16 z-20'>
                             <div className='w-full max-w-2xl gap-4 lg:gap-6 flex flex-col items-center lg:items-start text-center lg:text-left mx-auto lg:mx-0'>
                                 <div className='flex flex-col gap-4 items-center lg:items-start w-full '>
-                                    <div className='relative cursor-pointer'>
+                                    <div className='relative select-none'>
                                         <img className={`max-h-28 lg:max-h-48 object-contain origin-center lg:origin-left drop-shadow-2xl `} src={activeMovie.logo_path} alt={activeMovie.title} />
                                     </div>
-                                    <div className='flex gap-2 items-center select-none cursor-default'>
+                                    <div className='flex gap-2 items-center select-text'>
                                         <div className='flex gap-2 items-center'>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 lg:w-4.5 lg:h-4.5 text-white fill-white"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"></path></svg>
                                             <span className='text-white font-semibold'>{activeMovie.vote_average.toFixed(1)}/10</span>
@@ -236,10 +247,10 @@ export default function Home() {
                             <Swiper modules={[Navigation, FreeMode]} navigation={true} freeMode={true} spaceBetween={16} slidesPerView={'auto'} className='w-full'>
                                 {
                                     providers && providers.map((provider) => (
-                                        <SwiperSlide key={provider.id} className="w-19! py-5 lg:w-23!">
+                                        <SwiperSlide key={provider.provider_id} className="w-19! py-5 lg:w-23! select-none">
                                             <NavLink onClick={magicPill} to={`/provider/${provider.provider_id}`} className={`flex flex-col items-center gap-2 hover:scale-[1.05] hover:ring-white`}>
                                                 <div className='w-16 h-16 lg:w-20 lg:h-20 rounded-2xl overflow-hidden bg-white/5 ring-1 ring-white/10 shadow-lg transition-transform duration-300'>
-                                                    <img src={`${imgBaseUrl = 'https://image.tmdb.org/t/p/w780'}${provider.logo_path}`} alt={provider.provider_name} />
+                                                    <img src={`${imgBaseUrl = 'https://image.tmdb.org/t/p/w154'}${provider.logo_path}`} alt={provider.provider_name} loading='lazy' />
                                                 </div>
                                                 <p className='text-white text-sm text-center'>{provider.provider_name}</p>
                                             </NavLink>
