@@ -16,7 +16,7 @@ export default function CarouselComponent({ cardsData, type, title }) {
                             <Card id={movie.id} title={movie.title} img_path={movie.backdrop_path} release_date={movie.release_date} vote={movie.vote_average} type={type} />
                         </SwiperSlide>
                     )) : cardsData.map((show) => (
-                        <SwiperSlide key={show.id} className="w-50! lg:w-65! select-none">
+                        <SwiperSlide key={show.id} className="w-50! lg:w-65! p-5! select-none">
                             <Card id={show.id} title={show.name} img_path={show.backdrop_path} release_date={show.first_air_date} vote={show.vote_average} type={type} />
                         </SwiperSlide>
                     ))
