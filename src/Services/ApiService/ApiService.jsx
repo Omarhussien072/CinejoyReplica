@@ -119,13 +119,43 @@ export const getProviders = async (region = 'us') => {
         return JSON.parse(providerCache);
     }
 
-    let res = await axios(`${import.meta.env.VITE_API_URL}watch/providers/movie?api_key=${import.meta.env.VITE_API_KEY}&language=en-US&watch_region=${region}`)
+    let moviesRes = await axios(`${import.meta.env.VITE_API_URL}watch/providers/movie?api_key=${import.meta.env.VITE_API_KEY}&language=en-US&watch_region=${region}`)
+        .then(res => res.data.results)
+        .catch(err => console.error(err));
+    let showsRes = await axios(`${import.meta.env.VITE_API_URL}watch/providers/tv?api_key=${import.meta.env.VITE_API_KEY}&language=en-US&watch_region=${region}`)
         .then(res => res.data.results)
         .catch(err => console.error(err));
 
-    if (res && res.length > 0) {
-        localStorage.setItem('providers', JSON.stringify(res))
-        return res;
+
+    let filteredProviders = []
+
+    for (let i = 0; i < showsRes.length - 1; i++) {
+        if (moviesRes[i].provider_id === showsRes[i].provider_id) {
+            filteredProviders.push(moviesRes[i]);
+        }
+    }
+
+    let validProviders = await Promise.all(
+        filteredProviders.map(async (provider) => {
+            let movies = await axios(`${import.meta.env.VITE_API_URL}discover/movie?api_key=${import.meta.env.VITE_API_KEY}&include_adult=false&include_video=false&language=en-US&page=1&with_watch_providers=${provider.provider_id}&watch_region=${region}`)
+                .then(res => res.data.results)
+                .catch((err) => console.log(err));
+
+            let shows = await axios(`${import.meta.env.VITE_API_URL}discover/tv?api_key=${import.meta.env.VITE_API_KEY}&include_adult=false&include_video=false&language=en-US&page=1&with_watch_providers=${provider.provider_id}&watch_region=${region}`)
+                .then(res => res.data.results)
+                .catch((err) => console.log(err));
+
+            if(movies.length > 0 || shows.length > 0){
+                console.log(movies, shows);
+                return provider;
+            }
+        })
+    )
+    validProviders = validProviders.filter((provider) => provider != null);
+
+    if (validProviders && validProviders.length > 0) {
+        localStorage.setItem('providers', JSON.stringify(validProviders))
+        return validProviders;
     }
 }
 
@@ -172,7 +202,6 @@ export const getAllGenres = async () => {
         return JSON.parse(allGenres);
     }
 
-
     let moviesRes = await axios(`${import.meta.env.VITE_API_URL}genre/movie/list?api_key=${import.meta.env.VITE_API_KEY}&language=en-US`)
         .then(res => res.data.genres)
         .catch(err => console.error(err));
@@ -180,6 +209,7 @@ export const getAllGenres = async () => {
     let showsRes = await axios(`${import.meta.env.VITE_API_URL}genre/tv/list?api_key=${import.meta.env.VITE_API_KEY}&language=en-US`)
         .then(res => res.data.genres)
         .catch(err => console.error(err));
+
     if ((moviesRes && moviesRes.length > 0) && (showsRes && showsRes.length > 0)) {
         allGenres = [...moviesRes, ...showsRes];
         localStorage.setItem('allGenres', JSON.stringify(allGenres));
@@ -267,7 +297,7 @@ export const getRecommendations = async (id, type) => {
     }
 
     recommendationsCache[uniqueKey] = res;
-    localStorage.setItem('recommendationsCache', JSON.stringify(recommendationsCache));
+    localStorage.setItem('recommendations', JSON.stringify(recommendationsCache));
 
     return res;
 }
