@@ -2,20 +2,19 @@ import DetailsStyles from './Details.module.css';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getDetails, getRecommendations, imgBaseUrl } from '../../Services/ApiService/ApiService';
-import { AnimatePresence, motion } from 'framer-motion';
 import YouTube from 'react-youtube';
 import CarouselComponent from '../CarouselComponent/CarouselComponent';
+import { createPortal } from 'react-dom';
 
 export default function Details() {
     const { type, id } = useParams();
     const [details, setDetails] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [videoError, setVideoError] = useState(false);
     const [recommendations, setRecommendations] = useState([]);
+    const [videoError, setVideoError] = useState(false)
     const [secondRender, setSecondRender] = useState(false);
 
-    let [player, setPlayer] = useState(null);
-    let [isFullScreen, setIsFullScreen] = useState(false);
+    let [isVideoOpen, setIsVideoOpen] = useState(false);
 
     useEffect(() => {
         let isMounted = true;
@@ -31,16 +30,30 @@ export default function Details() {
 
         const loadRecommendations = async () => {
             const data = await getRecommendations(id, type);
-            if (isMounted && data);
-            setRecommendations(data);
-            setIsLoading(false);
+            if (isMounted && data) {
+                setRecommendations(data);
+                setIsLoading(false);
+            }
         }
 
         loadDetails();
         loadRecommendations();
-
         return () => { isMounted = false; setSecondRender(true); };
     }, [id, type]);
+
+    useEffect(() => {
+        const fullScreenChange = () => {
+            if (!document.fullscreenElement) {
+                setIsVideoOpen(false);
+                return true;
+            }
+        }
+        if (fullScreenChange) {
+            document.addEventListener('fullscreenchange', fullScreenChange);
+        } else {
+            document.removeEventListener('fullscreenchange', fullScreenChange);
+        }
+    }, [isVideoOpen])
 
     if (isLoading) {
         return <div className='min-h-screen w-full flex justify-center items-center'>
@@ -60,7 +73,6 @@ export default function Details() {
         return;
     }
 
-
     const triggerNativeFullScreen = (iframe) => {
         if (!iframe) return;
         if (iframe.requestFullscreen) {
@@ -72,16 +84,9 @@ export default function Details() {
         }
     }
 
-    const fullScreen = (e) => {
-        e.stopPropagation();
-        if (player && !isFullScreen) {
-            player.unMute();
-            player.playVideo();
-            triggerNativeFullScreen(player.getIframe());
-        } else {
-            setIsFullScreen(true);
-        }
-    }
+
+
+
     const detailsTitle = type === 'movie' ? details.title : details.name;
     const detailsDate = type === 'movie' ? details.release_date.slice(0, 4) : details.first_air_date.slice(0, 4);
     const validVideos = details.videos?.results?.filter((v) => v.type === 'Trailer' || v.type === 'Teaser');
@@ -89,8 +94,36 @@ export default function Details() {
     const activeVideoKey = validVideos?.length > 0 ? validVideos[0].key : fallbackVideo?.key;
     const activeLogo = Array.isArray(details.logo) ? details.logo[0]?.path_name : details.logo;
 
+    const openVideo = () => {
+        setIsVideoOpen(true);
+    }
     return (
         <div className={`relative min-h-screen w-full overflow-x-hidden bg-[#050505] pb-20 lg:pb-16`}>
+            {isVideoOpen && createPortal(
+                <div className={`fixed inset-0 z-50`}>
+                    <YouTube videoId={activeVideoKey}
+                        onReady={(e) => { triggerNativeFullScreen(e.target.getIframe()) }}
+                        onStateChange={() => { }}
+                        onError={() => setVideoError(true)}
+                        opts={{
+                            height: "100%",
+                            width: "100%",
+                            playerVars: {
+                                mute: 0,
+                                autoplay: 1,
+                                controls: 1,
+                                modestbranding: 0,
+                                rel: 0,
+                                loop: 0,
+                                playlist: activeVideoKey,
+                                disablekb: 0,
+                                fs: 1,
+                            }
+                        }}
+                        className='inset-0 w-full h-full object-cover select-none'
+                        iframeClassName='w-full h-full'
+                    />
+                </div>, document.body)}
 
             <div className={`fixed inset-0 w-full h-full z-0 pointer-events-none`}>
                 {details && <img className={`w-full h-full object-cover opacity-50 scale-105`} src={`${imgBaseUrl}${details.backdrop_path}`} alt={detailsTitle} />}
@@ -98,31 +131,7 @@ export default function Details() {
             </div>
 
             <div className='absolute top-0 left-0 right-0 h-[85vh] w-full overflow-hidden'>
-                {videoError !== true ? (
-                    <YouTube videoId={activeVideoKey}
-                        onReady={(e) => setPlayer(e.target)}
-                        onStateChange={() => { setIsFullScreen(false) }}
-                        onError={() => setVideoError(true)}
-                        opts={{
-                            height: "100%",
-                            width: "100%",
-                            playerVars: {
-                                mute: 1,
-                                autoplay: 1,
-                                controls: 0,
-                                modestbranding: 0,
-                                rel: 0,
-                                loop: 1,
-                                playlist: activeVideoKey,
-                                disablekb: 1,
-                            }
-                        }}
-                        className='absolute inset-0 w-full h-full scale-[1.8] object-cover pointer-events-none select-none z-0'
-                        iframeClassName='w-full h-full'
-                    />
-                ) : (
-                    <img className={`absolute z-10 w-full h-full object-cover`} src={`${imgBaseUrl}${details.backdrop_path}`} alt={detailsTitle} />
-                )}
+                <img className={`absolute z-10 w-full h-full object-cover`} src={`${imgBaseUrl}${details.backdrop_path}`} alt={detailsTitle} />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent z-10 pointer-events-none"></div>
             </div>
 
@@ -143,6 +152,7 @@ export default function Details() {
                         )}
                     </div>
 
+
                     <div className='flex gap-2 items-center select-none cursor-default'>
                         <span className='text-white text-xl font-semibold'>{details.genres[0]?.name}</span>
                         {details.genres[1] && (
@@ -154,7 +164,7 @@ export default function Details() {
                     </div>
 
                     <div className='flex justify-center items-end gap-2'>
-                        <button onClick={fullScreen} className={`relative rounded-full flex items-center justify-center transition-all cursor-pointer bg-white font-semibold tracking-wide disabled:opacity-50 active:scale-95 disabled:cursor-not-allowed select-none h-13 min-w-32.5 hover:scale-105 shadow-xl shadow-black/10 px-6 text-lg text-black`}>
+                        <button onClick={openVideo} className={`relative rounded-full flex items-center justify-center transition-all cursor-pointer bg-white font-semibold tracking-wide disabled:opacity-50 active:scale-95 disabled:cursor-not-allowed select-none h-13 min-w-32.5 hover:scale-105 shadow-xl shadow-black/10 px-6 text-lg text-black`}>
                             <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 mr-2 fill-current"><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" /></svg>
                             Play
                         </button>
